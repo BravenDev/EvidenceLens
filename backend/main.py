@@ -20,11 +20,11 @@ from backend.ollama import Ollama
 from backend.research import AskRequest, IndexRequest, Research, SearchRequest
 from backend.storage import Store
 
-logger = logging.getLogger("evidencelens")
+logger = logging.getLogger("bravetrace")
 
 
 class BodyLimitMiddleware:
-    """Bound request bytes BEFORE multipart parsing, including chunked requests."""
+    """Limit request bytes before multipart parsing, including chunked requests."""
 
     def __init__(self, app, upload_limit: int) -> None:
         self.app = app
@@ -87,7 +87,7 @@ def create_app(settings: Settings | None = None, ai: Ollama | None = None) -> Fa
             await run_in_threadpool(jobs.close)
 
     application = FastAPI(
-        title="EvidenceLens",
+        title="BraveTrace",
         version="0.2.0",
         lifespan=lifespan,
         description="Local document research with inspectable source passages.",
@@ -113,7 +113,7 @@ def create_app(settings: Settings | None = None, ai: Ollama | None = None) -> Fa
                     {
                         "error": {
                             "code": "origin_blocked",
-                            "message": "Use EvidenceLens from its own browser tab.",
+                            "message": "Use BraveTrace from its own browser tab.",
                         }
                     },
                     status_code=403,

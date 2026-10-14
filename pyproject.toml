@@ -1,5 +1,5 @@
 [project]
-name = "evidencelens"
+name = "bravetrace"
 version = "0.2.0"
 description = "Local document research with inspectable evidence and optional AI"
 requires-python = ">=3.12"

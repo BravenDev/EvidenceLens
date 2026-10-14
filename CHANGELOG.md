@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Rename the application and repository to BraveTrace.
+- Add `BRAVETRACE_*` settings while accepting the previous environment variables.
+  Keep the database filename and browser job key to preserve existing state.
+- Preserve sample-document text so duplicate detection also works after upgrading.
+
 ## 0.2.0
 
 - Prefer paragraph boundaries when splitting new uploads; use 700-character

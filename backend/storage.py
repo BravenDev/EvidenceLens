@@ -103,7 +103,7 @@ class Store:
             conn.execute("PRAGMA journal_mode=WAL")
             version = conn.execute("PRAGMA user_version").fetchone()[0]
             if version not in {0, 1, 2}:
-                raise RuntimeError("This database was created by a newer EvidenceLens version.")
+                raise RuntimeError("This database was created by a newer BraveTrace version.")
             try:
                 # Rebuild only the derived FTS index. Source IDs and vectors stay valid.
                 migration = ""

@@ -1,7 +1,7 @@
-# EvidenceLens
+# BraveTrace
 
 Search PDFs, Markdown, and text files, then open the exact passages behind each
-result. EvidenceLens runs locally with a Python backend and SQLite. Ollama adds
+result. BraveTrace runs locally with a Python backend and SQLite. Ollama adds
 optional AI answers and semantic search.
 
 The idea is simple: finding an answer should also make it easy to check where it
@@ -25,8 +25,8 @@ Clone the repository, or download its ZIP from GitHub. Open the folder containin
 `backend/` and `requirements.txt` in VS Code.
 
 ```powershell
-git clone https://github.com/BravenDev/EvidenceLens.git
-cd EvidenceLens
+git clone https://github.com/BravenDev/BraveTrace.git
+cd BraveTrace
 py -3.15 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install --only-binary=:all: -r requirements-dev.txt -c requirements-lock.txt
@@ -82,15 +82,19 @@ not loaded automatically.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `EVIDENCELENS_DATA_DIR` | `data/` in the project | Database and uploaded files |
-| `EVIDENCELENS_CHAT_MODEL` | `qwen3:4b` | Ollama answer model |
-| `EVIDENCELENS_EMBEDDING_MODEL` | `embeddinggemma` | Ollama embedding model |
+| `BRAVETRACE_DATA_DIR` | `data/` in the project | Database and uploaded files |
+| `BRAVETRACE_CHAT_MODEL` | `qwen3:4b` | Ollama answer model |
+| `BRAVETRACE_EMBEDDING_MODEL` | `embeddinggemma` | Ollama embedding model |
 | `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Local Ollama HTTP service |
+
+Existing `EVIDENCELENS_*` settings are still accepted. If both prefixes are set,
+`BRAVETRACE_*` takes precedence. The database filename remains
+`evidencelens.sqlite3`, so the rename preserves existing documents and history.
 
 For example, in PowerShell:
 
 ```powershell
-$env:EVIDENCELENS_CHAT_MODEL = "qwen3:0.6b"
+$env:BRAVETRACE_CHAT_MODEL = "qwen3:0.6b"
 ```
 
 If you replace an embedding model under the same name, force an index rebuild.
@@ -105,7 +109,7 @@ See the API docs at `/api/docs` and the [indexing notes](docs/ARCHITECTURE.md).
 .\.venv\Scripts\python.exe scripts\evaluate.py
 ```
 
-The suite has 91 tests. GitHub Actions runs the Python checks on Windows and Linux
+The suite has 94 tests. GitHub Actions runs the Python checks on Windows and Linux
 with Python 3.12 and 3.15. The retrieval script checks 18 questions against the
 three sample documents. See [test results](docs/VERIFICATION.md) for the scope of
 those checks.
@@ -165,6 +169,3 @@ The [migration notes](docs/ARCHITECTURE.md) explain what the upgrade preserves.
 ## License
 
 [MIT](LICENSE). Check the licenses of any models you download separately.
-
-The project was developed with AI-assisted coding. The walkthrough explains the
-implementation component by component.

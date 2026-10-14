@@ -1,1 +1,1 @@
-"""EvidenceLens application package."""
+"""BraveTrace application package."""

@@ -163,7 +163,7 @@ files are independent copies and cannot be removed by later library deletion.
 
 Stop the old server and back up the entire data directory before installing the
 new source. If moving to a new project folder, copy the old `data/` folder into
-it, or point `EVIDENCELENS_DATA_DIR` at the existing directory.
+it, or point `BRAVETRACE_DATA_DIR` at the existing directory.
 
 `PRAGMA user_version` identifies schema version 2. Version 1 upgrades inside a
 transaction: its derived FTS index is rebuilt with the new tokenizer, and history

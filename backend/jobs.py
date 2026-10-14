@@ -9,13 +9,13 @@ from datetime import UTC, datetime
 from backend.errors import AppError
 from backend.research import IndexRequest, Research
 
-logger = logging.getLogger("evidencelens.jobs")
+logger = logging.getLogger("bravetrace.jobs")
 
 
 class IndexJobs:
     def __init__(self, research: Research) -> None:
         self.research = research
-        self.pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="evidencelens-index")
+        self.pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="bravetrace-index")
         self.lock = threading.RLock()
         self.records: dict[str, dict] = {}
         self.stops: dict[str, threading.Event] = {}

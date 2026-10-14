@@ -726,7 +726,7 @@ function fenced(text) {
 }
 function exportNotes(data, action) {
   const lines = [
-    "# EvidenceLens research notes",
+    "# BraveTrace research notes",
     "",
     `- Question: ${markdownText(data.query)}`,
     `- Mode: ${action === "search" ? "Search" : data.mode === "ai" ? "Local AI answer" : "Evidence excerpts"}`,
@@ -759,7 +759,7 @@ function exportNotes(data, action) {
   const url = URL.createObjectURL(blob);
   const link = element("a");
   link.href = url;
-  link.download = `EvidenceLens_${(data.created_at || new Date().toISOString()).slice(0, 10)}.md`;
+  link.download = `BraveTrace_${(data.created_at || new Date().toISOString()).slice(0, 10)}.md`;
   document.body.append(link);
   link.click();
   link.remove();

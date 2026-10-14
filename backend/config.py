@@ -8,20 +8,18 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _env(name: str, default: str) -> str:
+    return os.getenv(f"BRAVETRACE_{name}", os.getenv(f"EVIDENCELENS_{name}", default))
+
+
 @dataclass(frozen=True)
 class Settings:
-    data_dir: Path = field(
-        default_factory=lambda: Path(os.getenv("EVIDENCELENS_DATA_DIR", ROOT / "data"))
-    )
+    data_dir: Path = field(default_factory=lambda: Path(_env("DATA_DIR", str(ROOT / "data"))))
     ollama_url: str = field(
         default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
     )
-    chat_model: str = field(
-        default_factory=lambda: os.getenv("EVIDENCELENS_CHAT_MODEL", "qwen3:4b")
-    )
-    embedding_model: str = field(
-        default_factory=lambda: os.getenv("EVIDENCELENS_EMBEDDING_MODEL", "embeddinggemma")
-    )
+    chat_model: str = field(default_factory=lambda: _env("CHAT_MODEL", "qwen3:4b"))
+    embedding_model: str = field(default_factory=lambda: _env("EMBEDDING_MODEL", "embeddinggemma"))
     max_upload_bytes: int = 10 * 1024 * 1024
     max_text_chars: int = 1_000_000
     max_pages: int = 300
@@ -40,6 +38,7 @@ class Settings:
 
     @property
     def db_path(self) -> Path:
+        # Keep the filename so upgrades open the existing database.
         return self.data_dir / "evidencelens.sqlite3"
 
     @property

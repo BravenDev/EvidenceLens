@@ -1,7 +1,7 @@
 {
-  "name": "evidencelens-browser-checks",
+  "name": "bravetrace-browser-checks",
   "private": true,
-  "description": "Optional browser checks; Node.js is not required to run EvidenceLens",
+  "description": "Optional browser checks; Node.js is not required to run BraveTrace",
   "scripts": {
     "test:browser": "node scripts/browser_smoke.cjs",
     "format:frontend": "prettier --write frontend scripts/browser_smoke.cjs",

@@ -15,7 +15,7 @@ from backend.storage import Store  # noqa: E402
 
 def main() -> None:
     cases = json.loads((ROOT / "examples" / "evaluation.json").read_text(encoding="utf-8"))
-    with tempfile.TemporaryDirectory(prefix="evidencelens-eval-") as temp:
+    with tempfile.TemporaryDirectory(prefix="bravetrace-eval-") as temp:
         settings = Settings(data_dir=Path(temp))
         store = Store(settings)
         store.initialize()

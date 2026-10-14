@@ -4,9 +4,9 @@
 
 | Check | Result |
 |---|---|
-| Python suite on Linux, Python 3.15.0 | 91 passed |
-| Python suite on Linux, Python 3.12.14 | 91 passed |
-| GitHub CI: Windows/Linux, Python 3.12/3.15 | All four jobs passed in [this run](https://github.com/BravenDev/EvidenceLens/actions/runs/38531081673) |
+| Python suite on Linux, Python 3.15.0 | 94 passed |
+| Python suite on Linux, Python 3.12.14 | 94 passed |
+| GitHub CI: Windows/Linux, Python 3.12/3.15 | The workflow checks all four combinations; see Actions for the latest result |
 | Dependency consistency | `pip check` passed |
 | Python lint and formatting | Ruff passed |
 | JavaScript syntax and formatting | Syntax checks and Prettier passed |
@@ -15,8 +15,8 @@
 | Sample keyword retrieval | 18/18 cases; MRR@5 of 1.000 for answerable queries |
 
 The local Python 3.15 run used SQLite 3.53.1 with FTS5. Current CI results are in
-the repository's Actions tab; the linked run above records the first passing
-publication check.
+the repository's Actions tab. The [first passing publication run](https://github.com/BravenDev/BraveTrace/actions/runs/38531081673)
+ran the original 91-test suite on all four combinations.
 
 ## What the tests cover
 
@@ -24,6 +24,10 @@ The Python suite checks uploads, PDF extraction, duplicate detection, source
 locations, persistence, deletion, database migration, retrieval, and model errors.
 It also checks history limits, deletion during generation, invalid citations,
 embedding-cache reuse, and index cancellation.
+
+Configuration checks cover both environment-variable prefixes and their
+precedence. They reopen an existing database and verify that uploads, saved
+answers, source IDs, and cached embeddings remain available after the rename.
 
 PDF fixtures include blank pages, page-number gaps, password protection, and
 page/character limits. The schema-v1 fixture checks that upgrades preserve source

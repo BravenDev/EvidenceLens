@@ -13,7 +13,7 @@ const { chromium } = require("playwright");
 
 const root = path.resolve(__dirname, "..");
 const python =
-  process.env.EVIDENCELENS_PYTHON ||
+  process.env.BRAVETRACE_PYTHON ||
   path.join(
     root,
     ".venv",
@@ -107,7 +107,7 @@ async function simulatedOllama() {
 }
 
 async function main() {
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "evidencelens-browser-"));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "bravetrace-browser-"));
   const port = await freePort();
   const url = `http://127.0.0.1:${port}`;
   const model = await simulatedOllama();
@@ -128,10 +128,10 @@ async function main() {
       cwd: root,
       env: {
         ...process.env,
-        EVIDENCELENS_DATA_DIR: temp,
+        BRAVETRACE_DATA_DIR: temp,
         OLLAMA_BASE_URL: model.url,
-        EVIDENCELENS_CHAT_MODEL: "browser-chat",
-        EVIDENCELENS_EMBEDDING_MODEL: "browser-embed",
+        BRAVETRACE_CHAT_MODEL: "browser-chat",
+        BRAVETRACE_EMBEDDING_MODEL: "browser-embed",
       },
       stdio: ["ignore", "ignore", "pipe"],
     },
@@ -167,19 +167,19 @@ async function main() {
       );
     browser = await chromium.launch({
       headless: true,
-      executablePath: process.env.EVIDENCELENS_BROWSER_EXECUTABLE || undefined,
+      executablePath: process.env.BRAVETRACE_BROWSER_EXECUTABLE || undefined,
       args: ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
     });
     const page = await browser.newPage({
       viewport: { width: 1440, height: 1050 },
     });
     async function capture(name) {
-      if (!process.env.EVIDENCELENS_SCREENSHOT_DIR) return;
-      fs.mkdirSync(process.env.EVIDENCELENS_SCREENSHOT_DIR, {
+      if (!process.env.BRAVETRACE_SCREENSHOT_DIR) return;
+      fs.mkdirSync(process.env.BRAVETRACE_SCREENSHOT_DIR, {
         recursive: true,
       });
       await page.screenshot({
-        path: path.join(process.env.EVIDENCELENS_SCREENSHOT_DIR, `${name}.png`),
+        path: path.join(process.env.BRAVETRACE_SCREENSHOT_DIR, `${name}.png`),
         fullPage: true,
       });
     }
@@ -196,7 +196,7 @@ async function main() {
       const download = await event;
       assert.match(
         download.suggestedFilename(),
-        /^EvidenceLens_\d{4}-\d{2}-\d{2}\.md$/,
+        /^BraveTrace_\d{4}-\d{2}-\d{2}\.md$/,
       );
       return fs.readFileSync(await download.path(), "utf8");
     }

@@ -23,7 +23,7 @@ Create `backend/__init__.py` and a minimal `backend/main.py`:
 ```python
 from fastapi import FastAPI
 
-app = FastAPI(title="EvidenceLens")
+app = FastAPI(title="BraveTrace")
 
 
 @app.get("/api/health")
