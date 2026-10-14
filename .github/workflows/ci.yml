@@ -28,7 +28,8 @@ jobs:
             requirements-dev.txt
             requirements-lock.txt
       - name: Install verified dependencies
-        run: python -m pip install --only-binary=:all: -r requirements-dev.txt -c requirements-lock.txt
+        run: |
+          python -m pip install --only-binary=:all: -r requirements-dev.txt -c requirements-lock.txt
       - name: Check environment
         run: python scripts/doctor.py
       - name: Check style
