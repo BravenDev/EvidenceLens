@@ -25,7 +25,7 @@ Clone the repository, or download its ZIP from GitHub. Open the folder containin
 `backend/` and `requirements.txt` in VS Code.
 
 ```powershell
-git clone https://github.com/BravenDev/EvidenceLens.git BraveTrace
+git clone https://github.com/SamYKarabacak/BraveTrace.git BraveTrace
 cd BraveTrace
 py -3.15 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip

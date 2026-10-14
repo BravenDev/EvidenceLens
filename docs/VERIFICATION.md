@@ -15,7 +15,7 @@
 | Sample keyword retrieval | 18/18 cases; MRR@5 of 1.000 for answerable queries |
 
 The local Python 3.15 run used SQLite 3.53.1 with FTS5. Current CI results are in
-the repository's Actions tab. The [first passing publication run](https://github.com/BravenDev/EvidenceLens/actions/runs/38531081673)
+the repository's Actions tab. The [first passing publication run](https://github.com/SamYKarabacak/BraveTrace/actions/runs/38531081673)
 ran the original 91-test suite on all four combinations.
 
 ## What the tests cover
