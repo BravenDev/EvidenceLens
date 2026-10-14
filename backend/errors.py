@@ -1,4 +1,4 @@
-"""Expected failures have a stable API code and a readable message."""
+"""Errors returned by the API."""
 
 
 class AppError(Exception):

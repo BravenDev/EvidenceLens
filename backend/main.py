@@ -1,4 +1,4 @@
-"""HTTP endpoints are thin adapters around the research service."""
+"""FastAPI application, middleware, and routes."""
 
 import logging
 import sys

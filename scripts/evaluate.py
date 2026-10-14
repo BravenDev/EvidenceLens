@@ -1,4 +1,4 @@
-"""A tiny, transparent retrieval baseline; this does not evaluate model answers."""
+"""Run the sample retrieval checks in temporary storage."""
 
 import json
 import sys

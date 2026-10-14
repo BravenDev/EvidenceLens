@@ -1,4 +1,4 @@
-"""AI is deliberately faked in unit tests; no models or network are required."""
+"""Test fixtures with temporary databases and a fake model client."""
 
 import re
 from io import BytesIO

@@ -1,32 +1,25 @@
-# Changes
+# Changelog
 
 ## 0.2.0
 
-- New uploads use paragraph-aware 700-character passages with 120-character
-  overlap and exact source offsets.
-- Keyword search adds English stemming, an explicit small alias map, concept
-  coverage filtering, numeric constraints, and previews from FTS snippets.
-- Successful searches and questions persist locally as up to 100 result
-  snapshots. Results reopen without inference and export to Markdown with full
-  source passages. Document deletion also removes related saved research.
-- Semantic indexing runs in a background worker with progress, cancellation
-  after the current model batch, and reuse of saved batches on resume.
-- AI format/citation errors receive one bounded repair attempt. Answers that
-  still fail validation remain withheld.
-- The browser has a compact results layout, a mobile library toggle, saved-history
-  controls, and formatted source files for easier learning and maintenance.
-- A transactional schema-v1 migration preserves existing document/source IDs,
-  files, extracted text, and embeddings while rebuilding only the keyword index.
-- Automated checks cover migration, deleted-source races, bounded history,
-  background jobs, format repair, exports, and offline saved-answer reopening.
+- Prefer paragraph boundaries when splitting new uploads; use 700-character
+  passages with 120 characters of overlap.
+- Add English stemming, query-coverage filtering, numeric constraints, and FTS
+  snippets to keyword search.
+- Save the latest 100 research results and export notes with full source passages.
+- Build embeddings in a background job, with progress and cancellation after the
+  current batch. Reuse saved vectors when resuming.
+- Retry an invalid AI answer format or citation set once before withholding it.
+- Add a mobile library toggle and a more compact results view.
+- Migrate v0.1 databases without changing existing document IDs, source IDs, or
+  embeddings.
 
-On the expanded 18-case fictional retrieval sample, v0.1 passes 15 cases and
-v0.2 passes 18. The three differences are weak matches for unrelated topics that
-share one document word. Both versions achieve answerable-query MRR@5 of 1.000
-on this tiny sample; this is not a general retrieval or model-quality benchmark.
+The sample retrieval checks now pass 18/18 cases, up from 15/18. The three added
+passes reject unrelated queries that share one word with a document. The sample
+contains only three fictional documents; evaluation details are in
+[docs/VERIFICATION.md](docs/VERIFICATION.md).
 
 ## 0.1.0
 
-Initial local application: PDF/TXT/MD uploads, persistent SQLite/FTS5 search,
-source inspection, optional Ollama answers and hybrid retrieval, tests, a Windows
-setup guide, and a prepared GitHub CI workflow.
+Initial version with PDF/TXT/Markdown uploads, SQLite search, source inspection,
+Ollama integration, hybrid retrieval, tests, and a browser interface.

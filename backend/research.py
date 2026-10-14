@@ -1,4 +1,4 @@
-"""Coordinate ingestion, retrieval, and grounded answers without mixing in HTTP."""
+"""Document ingestion, search, and answer generation."""
 
 import re
 import threading

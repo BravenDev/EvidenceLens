@@ -1,4 +1,4 @@
-"""Configuration is explicit, local by default, and easy to override in tests."""
+"""Application settings and local data paths."""
 
 import os
 from dataclasses import dataclass, field

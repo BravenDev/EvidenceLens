@@ -1,8 +1,15 @@
-# Architecture and engineering decisions
+# Design notes
 
-EvidenceLens is one Python application serving a static browser interface. It is
-intended for a single user on their own computer. It has two explicit answer modes:
-Evidence returns passages; AI produces a grounded answer through a local model.
+FastAPI serves the browser assets and JSON API. SQLite stores document text and
+search data. Evidence mode returns passages; AI mode sends those passages to a
+local Ollama model and validates its response.
+
+## Stack choices
+
+SQLite provides storage and keyword search without another service to install.
+Serving the UI from FastAPI keeps browser requests on the same origin. Ollama's
+HTTP API keeps model dependencies outside the Python environment, which also
+makes it easier to substitute a fake client in tests.
 
 ## Data flow
 
@@ -23,8 +30,8 @@ The HTTP layer handles transport and request validation. `Research` coordinates
 the use cases. `Store` handles persistence. `Retriever` handles ranking. `Ollama`
 handles model requests. `IndexJobs` manages a single background embedding worker.
 Successful research results are saved as snapshots in the same database.
-Extraction and splitting are pure functions with no HTTP
-or database dependency. This structure makes the core behavior testable.
+Extraction and splitting are pure functions, so their offset and coverage tests
+do not need a server or database.
 
 ## Source identity
 
@@ -104,9 +111,9 @@ reciprocal-rank fusion: each rank contributes `1 / (60 + rank)`. Ranking positio
 are combined because BM25 and cosine scores are on different scales. Scores are
 not presented as answer-confidence percentages.
 
-There is no dedicated vector database. Loading/scoring all vectors is intentionally
-a small-dataset implementation. An embedding index, reranker, and measured
-throughput are later extensions, not claimed current capabilities.
+Vector search currently scans the cached embeddings in Python. This is simple
+enough for a small library; larger datasets will need a vector index and workload
+measurements.
 
 ## Answer generation and its limits
 
@@ -152,12 +159,19 @@ cited and inspection-only passages. Metadata is escaped, and untrusted answer
 and source text use fences longer than any contained backtick sequence. Exported
 files are independent copies and cannot be removed by later library deletion.
 
+### Upgrading from v0.1
+
+Stop the old server and back up the entire data directory before installing the
+new source. If moving to a new project folder, copy the old `data/` folder into
+it, or point `EVIDENCELENS_DATA_DIR` at the existing directory.
+
 `PRAGMA user_version` identifies schema version 2. Version 1 upgrades inside a
 transaction: its derived FTS index is rebuilt with the new tokenizer, and history
 tables are added. Documents, chunk IDs/offsets, files, and vectors survive the
-migration. Existing chunks are not regenerated. A newer, unknown schema is rejected
-to avoid silently opening incompatible data. Back up the entire data directory
-before updating; returning to v0.1 requires restoring its backup.
+migration. Existing chunks are not regenerated. The new splitting settings apply
+to new uploads; removing and re-uploading an old document creates new source IDs
+and removes its related history. A newer, unknown schema is rejected. Returning
+to v0.1 requires the original data backup.
 
 ## API map
 
@@ -217,7 +231,7 @@ browser mutation requests from other origins; local hostnames are allowlisted.
 The main UI uses a restrictive content security policy and no external assets.
 Interactive API documentation may load Swagger resources from a CDN.
 
-## Next stages
+## Next steps
 
 1. Evaluate a live local model on answerable, unanswerable, conflicting, and
    adversarial document questions; preserve inputs and reviewed outputs.

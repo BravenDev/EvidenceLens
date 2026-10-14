@@ -1,4 +1,4 @@
-"""A small HTTP adapter keeps local AI independent of the Python ML ecosystem."""
+"""HTTP client for local Ollama models."""
 
 import json
 import math

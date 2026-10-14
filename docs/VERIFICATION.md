@@ -1,113 +1,88 @@
-# Verification of EvidenceLens 0.2.0
+# Testing and evaluation
 
-This report records local checks completed before GitHub source publication.
-The repository's Actions tab reports current CI results separately.
+## Checks for v0.2.0
 
-## Executed checks
+| Check | Result |
+|---|---|
+| Python suite on Linux, Python 3.15.0 | 91 passed |
+| Python suite on Linux, Python 3.12.14 | 91 passed |
+| GitHub CI: Windows/Linux, Python 3.12/3.15 | All four jobs passed in [this run](https://github.com/BravenDev/EvidenceLens/actions/runs/38531081673) |
+| Dependency consistency | `pip check` passed |
+| Python lint and formatting | Ruff passed |
+| JavaScript syntax and formatting | Syntax checks and Prettier passed |
+| Browser workflow | Passed in Chromium 153 on Linux |
+| Layout review | Desktop at 1440 px and mobile at 390 px |
+| Sample keyword retrieval | 18/18 cases; MRR@5 of 1.000 for answerable queries |
 
-| Check | Result | Scope |
-|---|---|---|
-| Python 3.15.0 automated suite | 91 passed | Executed on Linux with stable CPython 3.15.0 and SQLite 3.53.1 FTS5 |
-| Python 3.12.14 automated suite | 91 passed | Compatibility check on Linux |
-| Dependency consistency | Passed | `pip check` in the Python 3.15 test environment |
-| Ruff lint and formatting | Passed | Delivered Python source and tests |
-| JavaScript syntax | Passed | Browser application and browser smoke script |
-| Prettier formatting | Passed | Browser source and smoke script |
-| Retrieval baseline | 18/18 cases; answerable-query MRR@5 1.000 | Three fictional documents, keyword retrieval only |
-| Schema-v1 migration | Passed | Legacy source ID, file, vector, source text, and rebuilt search preserved; repeat initialization checked |
-| Actual browser smoke workflow | Passed | Playwright with Chromium 153 on Linux |
-| Desktop and mobile visual inspection | Passed | Desktop 1440 px; mobile 390 px; source dialog reviewed |
+The local Python 3.15 run used SQLite 3.53.1 with FTS5. Current CI results are in
+the repository's Actions tab; the linked run above records the first passing
+publication check.
 
-The Python suite uses temporary databases and a simulated model adapter. Tests
-also exercise Ollama HTTP contracts using an HTTP mock transport. The browser
-test uses the normal application adapter against a simulated local HTTP service
-with fixed vectors and responses. No API credits or model downloads are required
-for these checks. That fixture is only part of the test script.
+## What the tests cover
 
-## Retrieval comparison
+The Python suite checks uploads, PDF extraction, duplicate detection, source
+locations, persistence, deletion, database migration, retrieval, and model errors.
+It also checks history limits, deletion during generation, invalid citations,
+embedding-cache reuse, and index cancellation.
 
-Both releases were evaluated on the same three supplied fictional documents and
-the expanded `examples/evaluation.json`. Each used its own default chunking and
-keyword pipeline; this compares the complete versions, not an isolated algorithm.
+PDF fixtures include blank pages, page-number gaps, password protection, and
+page/character limits. The schema-v1 fixture checks that upgrades preserve source
+IDs, files, text, and vectors. Request-limit tests include streamed bodies without
+a Content-Length header.
+
+The browser smoke test exercises the UI against a temporary server:
+
+- Load samples, upload documents, filter the library, and select a search scope.
+- Search, inspect highlighted source text, and download the original file.
+- Index in the background, search during a build, cancel, reload, and resume.
+- Render AI citations, repair an invalid response, and reopen saved answers offline.
+- Export notes, keep HTML/backticks as literal text, and clear related history.
+- Complete the mobile workflow without horizontal overflow or JavaScript errors.
+
+Model calls use a fake adapter, HTTP mock transport, or a simulated local HTTP
+service. The browser fixture returns fixed vectors and answers. These checks
+verify integration and error handling; live Ollama answer quality has not been
+evaluated yet.
+
+## Retrieval sample
+
+`scripts/evaluate.py` loads the three example documents into temporary storage.
+Both versions were run against the same 18 questions using their default keyword
+pipelines, including their respective chunking settings.
 
 | Measure | v0.1.0 | v0.2.0 |
 |---|---|---|
-| All regression cases passed | 15/18 | 18/18 |
-| Answerable cases with expected document in top 5 | 13/13 | 13/13 |
-| Unsupported cases with no retrieved passage | 2/5 | 5/5 |
+| All cases passed | 15/18 | 18/18 |
+| Answerable cases with the expected document in the top five | 13/13 | 13/13 |
+| Unsupported cases returning no passage | 2/5 | 5/5 |
 | Answerable-query MRR@5 | 1.000 | 1.000 |
 
-The three differences are `pilot telescope`, `budget volcano`, and
-`retention quasar`. Previously, a shared word was enough to return evidence.
-The coverage rule now rejects these cases. English variants, single-digit
-numbers, and aliases also have targeted tests. These cases were developed with
-the implementation; they are a small regression suite, not a held-out dataset
-or evidence of general retrieval performance. No answer-quality score is claimed.
+The changed cases are `pilot telescope`, `budget volcano`, and `retention quasar`.
+The old query returned passages on a single shared word; the coverage rule rejects
+those matches. The cases were written alongside the implementation, so this is a
+small regression sample rather than a held-out benchmark. It does not measure
+model answers or general retrieval quality.
 
-## Browser behavior exercised
+## Running the checks
 
-- Initial interface and empty-question handling.
-- Loading the sample collection and preventing duplicate sample records.
-- Keyword search and correct first source for the audit-log query.
-- Opening source context and highlighting the actual retrieved text.
-- Downloading the original source document as an attachment.
-- Filtering the library, selecting a document scope, and keyboard question submission.
-- Uploading text files and skipping duplicates with different filenames.
-- Rendering HTML-like document content as literal text without executing it.
-- Explicit insufficient-evidence responses and the local AI setup dialog.
-- Background indexing progress while keyword research remains usable.
-- Reconnecting to an active job after a page reload, requesting cancellation,
-  preserving the completed eight-passage batch, and resuming the remaining cache.
-- Hybrid retrieval and AI citation rendering through the normal HTTP adapter
-  against simulated model responses, including one invalid-citation repair.
-- Saved AI answers reopening with the model reported unavailable, with no new
-  embedding or chat calls, and restored answer/retrieval controls.
-- Markdown downloads containing answers, source IDs, locations, and full passages;
-  embedded HTML/backtick content remains inside safe text fences.
-- Individual saved-result deletion and clearing history without removing documents.
-- Deleting a document and keeping other documents available after a browser reload.
-- Removing saved results related to that document while preserving unrelated history.
-- Mobile research workflow with no horizontal overflow.
-- Passage previews centered on matching question terms.
-- No JavaScript page errors during the tested workflow.
+After following the README setup, use the project interpreter:
 
-Persistence across a full application shutdown/restart is separately checked in
-the Python suite, not inferred only from a browser reload. The suite also verifies
-bounded history, migration, unknown newer schemas, and a source disappearing
-during generation. PDF tests use real
-in-memory PDFs, including blank pages, page-number gaps, password protection,
-and page/character limits. A streaming ASGI test verifies request limits without
-relying on a Content-Length header.
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m ruff check .
+.\.venv\Scripts\python.exe -m ruff format --check .
+.\.venv\Scripts\python.exe scripts\evaluate.py
+```
 
-## Not executed or not established
+On Linux/macOS, use `.venv/bin/python`. With Node.js and Playwright installed,
+run `npm run test:browser` and `npm run check:frontend`.
 
-- **Live Ollama model generation and real-model semantic quality:** models were not
-  downloaded in this environment. The integration is implemented and its protocol
-  and failure paths are tested, but live model behavior must be evaluated locally.
-- **Local native Windows execution:** local checks ran on Linux. The GitHub CI
-  matrix separately checks Windows; consult its completed runs for those results.
-- **Public application deployment:** publishing source does not start a hosted
-  Python server or an Ollama service. This release runs locally.
-- **Large-scale throughput, hostile-parser isolation, multilingual answer quality,
-  and automatic claim entailment:** these are outside this version's verification.
+For a live model evaluation, load the examples and review a factual question,
+an unsupported question, the conflicting retention proposal, a synonym query,
+and a document containing instructions to ignore the system prompt. Record the
+model/version, hardware, retrieved passages, answer, citations, and latency.
+Review whether each claim follows from its source, not just whether its source
+ID exists.
 
-## Reproduce
-
-Use the README's environment setup, then run `python -m pytest -q`,
-`python -m ruff check .`, `python -m ruff format --check .`, and
-`python scripts/evaluate.py` with the project interpreter. The optional
-`npm run test:browser` script starts an isolated server and temporary library.
-Run `npm run check:frontend` to reproduce the optional Prettier check.
-
-For live AI verification, download the configured chat and embedding models,
-load the fictional samples, build the semantic index, and manually review:
-
-1. An explicit factual question: the pilot timeline.
-2. A policy-versus-proposal question: approved audit-log retention.
-3. An unsupported question: a planetary fact absent from the documents.
-4. A synonym query comparing keyword and hybrid retrieval.
-5. A document containing instructions to ignore the assistant's system prompt.
-
-Record the model name/version, hardware, settings, retrieved passages, generated
-answer, citations, latency, and human review. Evaluate claim support separately
-from whether the cited passage ID exists.
+OCR, multilingual retrieval, large-library performance, parser isolation, and
+streaming answers still need separate work.

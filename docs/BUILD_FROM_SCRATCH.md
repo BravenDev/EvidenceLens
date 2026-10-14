@@ -1,8 +1,8 @@
-# Rebuild EvidenceLens in VS Code
+# Development walkthrough
 
-The supplied application is a reference implementation. This guide explains a
-path for rebuilding it in a separate folder, adding one working capability at a
-time. You do not need Ollama for the first five stages.
+This guide follows the application from a small server to document search and
+AI answers. Use it to trace the code or rebuild each part in a separate folder.
+The first five stages work without Ollama.
 
 ## First run, then inspect
 
@@ -45,7 +45,7 @@ Create `frontend/index.html` with a title, an input, and a button. Serve it usin
 `FileResponse`. Mount `StaticFiles` at `/assets` for CSS and JavaScript. Use
 JavaScript `fetch('/api/health')` to show the server status in the page.
 
-In the reference interface, `api()` wraps fetch and converts structured server
+In the browser, `api()` wraps fetch and converts structured server
 errors into readable messages. `element()` creates DOM nodes and assigns their
 `textContent`. This is essential when displaying untrusted document text.
 `busy()` prevents overlapping user actions; `notice()` reports status and errors.
@@ -59,7 +59,7 @@ Start with `.txt` only. An upload arrives as `UploadFile`; read a bounded number
 of bytes, decode UTF-8, and reject empty or binary text. Build this as a pure
 function before adding a database.
 
-The reference separates this logic:
+The extraction module separates this logic:
 
 | Function | What it does | Why it is separate |
 |---|---|---|
@@ -69,8 +69,8 @@ The reference separates this logic:
 
 `PageText` and `Passage` are frozen dataclasses: simple records with named fields.
 The splitter walks the text with a cursor, prefers a paragraph boundary, falls
-back to whitespace, trims
-edge whitespace, and stores the adjusted offsets. It then steps back by the
+back to whitespace, trims edge whitespace, and stores the adjusted offsets.
+It then steps back by the
 overlap size and adjusts to a word boundary before taking the next passage.
 The defaults are 700 characters and 120 characters of overlap. PDF pages are
 split independently.
@@ -88,7 +88,7 @@ Add SQLite tables for documents, text units, and passages. Use bound SQL
 parameters. Enable foreign keys for every connection. Put SQL behind a `Store`
 class so the upload function does not need to know the schema.
 
-Important reference methods:
+The main `Store` methods are:
 
 - `initialize()` creates folders/tables, checks schema version, migrates v1, and
   verifies FTS5 support. Read the version-1 fixture in `tests/fixtures/` to compare
@@ -100,7 +100,7 @@ Important reference methods:
 - `remove()` cascades database deletion and removes the original file.
 
 `with conn:` commits or rolls back a transaction; it does not close the connection.
-The reference uses `closing(...)` to close connections as well. A lock coordinates
+`closing(...)` closes connections as well. A lock coordinates
 mutations within this one application process.
 
 Checkpoint: upload a document, stop the server, restart it, and find it again.
@@ -118,8 +118,7 @@ overlapping passages. Preserve the source fields in the response.
 checks concept coverage and numbers, and returns ranked source records. The FTS
 Porter tokenizer matches English word variants. The small `ALIASES` dictionary
 contains deliberate query expansions you can inspect and change.
-`diversify()` keeps repeated overlap from
-dominating the result list.
+`diversify()` keeps repeated overlap from dominating the result list.
 
 In the browser, `runResearch()` reads the question and sends a POST request.
 `renderResult()` builds the answer and evidence cards. `inspectSource()` fetches
@@ -141,7 +140,7 @@ precision/recall tradeoff before changing the rule.
 ## Stage 6 — AI answers
 
 Install Ollama and a supported chat model. Keep the model behind an adapter rather
-than placing HTTP calls inside each route. The reference `Ollama.generate()` sends
+than placing HTTP calls inside each route. `Ollama.generate()` sends
 a system prompt, a question, and source records to `/api/chat`. It requests a JSON
 schema and disables streaming for a simple first implementation.
 
@@ -159,9 +158,9 @@ document cannot answer. Test conflicting passages and a document containing
 instructions to ignore the system prompt. Human review is still necessary:
 citation validation cannot prove every answer claim follows from the source.
 
-The unit-test fake in `tests/conftest.py` is only a controlled test double. It is
-not an AI model and is never used by the normal application. A passing unit suite
-does not establish the quality of a live model.
+The fake client in `tests/conftest.py` makes model-dependent tests deterministic.
+The application uses the real HTTP adapter; model answer quality needs its own
+evaluation.
 
 ## Stage 7 — Semantic and hybrid retrieval
 
@@ -219,8 +218,7 @@ background cancellation. The browser smoke script starts its own temporary
 server and simulated Ollama HTTP service to check actual browser behavior. Its
 fixed responses/vectors verify integration, not model intelligence.
 Ruff checks Python style and formatting. Optional Prettier scripts format the
-frontend and browser test. CI prepares the same
-Python checks for Windows and Linux after publication.
+frontend and browser test. CI runs the Python checks on Windows and Linux.
 
 For the next stage, choose a substantive improvement to implement yourself and
 document your decisions. Examples:
@@ -230,10 +228,8 @@ document your decisions. Examples:
 - Compare several passage sizes against a larger independent retrieval dataset.
 - Add search highlighting that marks individual matched concepts in previews.
 
-Work through the stages in your own folder, committing at each checkpoint after
-you are ready to use Git. Use the reference code to review one component at a
-time, then explain its inputs, outputs, failure paths, and tests in your own words.
+Work through one component at a time and commit at each checkpoint. Trace its
+inputs, outputs, failure paths, and tests before changing it.
 
 Keep a short decision log describing the problem, your change, and its measured
-result. Prepare the README and demonstration using fictional data. Publication
-is a separate step requiring your approval.
+result. Use fictional data for demonstrations.

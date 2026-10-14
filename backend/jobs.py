@@ -1,4 +1,4 @@
-"""A cancellable local worker builds embeddings without blocking the browser."""
+"""Background embedding jobs with progress and cancellation."""
 
 import logging
 import threading

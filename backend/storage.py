@@ -260,7 +260,7 @@ class Store:
         return [source(row) for row in rows]
 
     def matching_terms(self, groups: list[str], chunk_ids: list[int]) -> dict[int, set[int]]:
-        """Count distinct query concepts using the SAME tokenizer as the index."""
+        """Count matching query concepts using the FTS tokenizer."""
         matches = {cid: set() for cid in chunk_ids}
         if not chunk_ids:
             return matches
