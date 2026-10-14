@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Rename the application and repository to BraveTrace.
+- Rename the application to BraveTrace.
 - Add `BRAVETRACE_*` settings while accepting the previous environment variables.
   Keep the database filename and browser job key to preserve existing state.
 - Preserve sample-document text so duplicate detection also works after upgrading.
