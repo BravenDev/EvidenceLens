@@ -1,0 +1,14 @@
+{
+  "name": "evidencelens-browser-checks",
+  "private": true,
+  "description": "Optional browser checks; Node.js is not required to run EvidenceLens",
+  "scripts": {
+    "test:browser": "node scripts/browser_smoke.cjs",
+    "format:frontend": "prettier --write frontend scripts/browser_smoke.cjs",
+    "check:frontend": "prettier --check frontend scripts/browser_smoke.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "prettier": "3.9.10"
+  }
+}

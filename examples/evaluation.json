@@ -1,0 +1,74 @@
+[
+  {
+    "query": "What is the pilot timeline?",
+    "expected_document": "pilot-brief.md"
+  },
+  {
+    "query": "Who owns the retrieval evaluation?",
+    "expected_document": "pilot-brief.md"
+  },
+  {
+    "query": "How long are operational audit logs retained?",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "Who approves security exceptions?",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "What was proposed about retention?",
+    "expected_document": "meeting-notes.md"
+  },
+  {
+    "query": "Where are research documents stored?",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "What is the approved external API budget?",
+    "expected_document": "pilot-brief.md"
+  },
+  {
+    "query": "What about OCR for scanned PDFs?",
+    "expected_document": "meeting-notes.md"
+  },
+  {
+    "query": "Venus orbital eccentricity",
+    "expected_document": null
+  },
+  {
+    "query": "Submarine propulsion turbine specifications",
+    "expected_document": null
+  },
+  {
+    "query": "approve security exceptions",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "Week 6 final evaluation",
+    "expected_document": "pilot-brief.md"
+  },
+  {
+    "query": "audit log retention 90 days",
+    "expected_document": "meeting-notes.md"
+  },
+  {
+    "query": "How long are source documents retained?",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "storage access",
+    "expected_document": "security-policy.md"
+  },
+  {
+    "query": "pilot telescope",
+    "expected_document": null
+  },
+  {
+    "query": "budget volcano",
+    "expected_document": null
+  },
+  {
+    "query": "retention quasar",
+    "expected_document": null
+  }
+]

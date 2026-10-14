@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#17191b" />
+    <title>EvidenceLens — Document research</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <svg class="svg-defs" aria-hidden="true">
+      <defs>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m16 16 4.5 4.5" />
+        </symbol>
+        <symbol id="i-file" viewBox="0 0 24 24">
+          <path
+            d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"
+          />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24">
+          <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24">
+          <rect x="8" y="8" width="12" height="13" rx="2" />
+          <path d="M16 8V3H3v13h5" />
+        </symbol>
+        <symbol id="i-download" viewBox="0 0 24 24">
+          <path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" />
+        </symbol>
+        <symbol id="i-lens" viewBox="0 0 32 32">
+          <circle cx="14" cy="14" r="10" />
+          <circle cx="14" cy="14" r="5" />
+          <path d="m22 22 7 7M14 1v3M1 14h3" />
+        </symbol>
+      </defs>
+    </svg>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Document library">
+        <div class="sidebar-brand">
+          <a href="/" class="brand"
+            ><span class="brand-mark"
+              ><svg><use href="#i-lens" /></svg></span
+            ><span>EvidenceLens<small>DOCUMENT RESEARCH</small></span></a
+          ><button
+            id="library-toggle"
+            class="library-toggle"
+            type="button"
+            aria-expanded="true"
+            aria-label="Toggle document library"
+          >
+            <svg aria-hidden="true"><use href="#i-file" /></svg>
+          </button>
+        </div>
+        <div class="workspace-label">
+          <span class="workspace-dot"></span> Personal workspace
+          <span class="workspace-lock">LOCAL</span>
+        </div>
+        <div class="sidebar-heading">
+          <h2>Your library</h2>
+          <span id="sidebar-count" class="count">0</span>
+        </div>
+        <div id="drop-zone" class="drop-zone">
+          <svg class="upload-icon" aria-hidden="true">
+            <use href="#i-plus" />
+          </svg>
+          <button id="upload-button" class="upload-button" type="button">
+            Add documents
+          </button>
+          <span>or drop them here</span>
+          <small>PDF, TXT, MD · up to 10 MB each</small>
+          <input
+            id="file-input"
+            type="file"
+            accept=".pdf,.txt,.md"
+            multiple
+            hidden
+          />
+        </div>
+        <label class="library-filter"
+          ><svg aria-hidden="true"><use href="#i-search" /></svg
+          ><input
+            id="document-filter"
+            placeholder="Find a document"
+            aria-label="Filter document library"
+        /></label>
+        <button id="all-documents" class="scope-button active" type="button">
+          <span>All documents</span><span id="all-count">0</span>
+        </button>
+        <div id="document-list" class="document-list"></div>
+        <section class="history-section" aria-label="Saved research">
+          <div class="history-heading">
+            <h2>Recent research</h2>
+            <button id="history-button" type="button">View all</button>
+          </div>
+          <div id="recent-history" class="recent-history">
+            <p class="history-empty">Your research will appear here.</p>
+          </div>
+        </section>
+        <div class="sidebar-bottom">
+          <button id="sample-button" class="sample-button" type="button">
+            <svg aria-hidden="true"><use href="#i-file" /></svg> Try sample
+            documents <span>↗</span>
+          </button>
+          <div class="ai-status-card">
+            <span id="ai-dot" class="status-dot"></span>
+            <div>
+              <strong id="ai-status">Checking local AI</strong
+              ><span id="ai-detail">Evidence search is ready</span>
+            </div>
+            <button
+              id="help-button"
+              class="icon-button"
+              aria-label="Open local AI setup guide"
+              type="button"
+            >
+              ?
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <div>
+            <span class="muted">Workspace</span
+            ><span class="breadcrumb-divider">/</span>Research room
+          </div>
+          <span class="local-badge"><span></span> Stored on this computer</span>
+        </header>
+        <div class="main-content">
+          <section class="hero">
+            <div class="eyebrow">
+              <span class="tiny-line"></span> CLARITY STARTS WITH A SOURCE
+            </div>
+            <h1>Research with<br /><span>evidence.</span></h1>
+            <p>
+              Ask your documents a question.<br class="mobile-break" />
+              Follow the answer back to its source.
+            </p>
+            <div id="library-summary" class="library-summary">
+              Your research workspace is ready.
+            </div>
+          </section>
+          <section class="composer" aria-label="Research question">
+            <label class="sr-only" for="question">Your research question</label>
+            <textarea
+              id="question"
+              rows="3"
+              maxlength="2000"
+              placeholder="What would you like to find in your documents?"
+            ></textarea>
+            <div class="composer-footer">
+              <div class="composer-settings">
+                <div class="mode-switch" role="group" aria-label="Answer mode">
+                  <button
+                    id="evidence-mode"
+                    class="selected"
+                    type="button"
+                    aria-pressed="true"
+                  >
+                    Evidence</button
+                  ><button id="ai-mode" type="button" aria-pressed="false">
+                    AI answer
+                  </button>
+                </div>
+                <label class="sr-only" for="retrieval">Retrieval method</label>
+                <select id="retrieval">
+                  <option value="keyword">Keyword search</option>
+                  <option value="hybrid">Hybrid search</option>
+                </select>
+              </div>
+              <div class="composer-actions">
+                <button id="search-button" class="search-action" type="button">
+                  <svg aria-hidden="true"><use href="#i-search" /></svg
+                  >Search</button
+                ><button id="ask-button" class="primary-button" type="button">
+                  Ask EvidenceLens<svg aria-hidden="true">
+                    <use href="#i-arrow" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </section>
+          <div class="under-composer">
+            <span id="scope-label">Searching all documents</span
+            ><span>Ctrl + Enter to ask</span>
+          </div>
+          <div id="suggestions" class="suggestions">
+            <span>Try asking</span
+            ><button type="button" data-prompt="What is the pilot timeline?">
+              What is the pilot timeline?</button
+            ><button
+              type="button"
+              data-prompt="How long are audit logs retained?"
+            >
+              How long are audit logs retained?</button
+            ><button
+              type="button"
+              data-prompt="Who approves security exceptions?"
+            >
+              Who approves exceptions?
+            </button>
+          </div>
+          <div id="notice" class="notice" role="status" hidden></div>
+          <section
+            id="index-progress"
+            class="index-progress"
+            aria-label="Semantic indexing progress"
+            aria-live="polite"
+            hidden
+          >
+            <div class="index-progress-heading">
+              <strong>Preparing semantic search</strong
+              ><span id="index-progress-count"></span
+              ><button id="cancel-index" type="button">Stop indexing</button>
+            </div>
+            <progress id="index-progress-bar" max="100" value="0"></progress>
+            <p id="index-progress-detail">
+              Completed passages are saved as the index builds.
+            </p>
+          </section>
+          <section
+            id="results"
+            class="results"
+            aria-live="polite"
+            aria-busy="false"
+            hidden
+          ></section>
+          <section id="empty-state" class="empty-state">
+            <div class="empty-heading">
+              <span>01 / GET STARTED</span
+              ><span>A clear trail, from question to source.</span>
+            </div>
+            <div class="intro-grid">
+              <article>
+                <span class="intro-number">01</span
+                ><svg aria-hidden="true"><use href="#i-plus" /></svg>
+                <h3>Bring your documents</h3>
+                <p>
+                  Add notes, reports, and text-based PDFs to your local library.
+                </p>
+              </article>
+              <article>
+                <span class="intro-number">02</span
+                ><svg aria-hidden="true"><use href="#i-search" /></svg>
+                <h3>Find the useful passages</h3>
+                <p>
+                  Search directly or ask a question to retrieve relevant
+                  evidence.
+                </p>
+              </article>
+              <article>
+                <span class="intro-number">03</span
+                ><svg aria-hidden="true"><use href="#i-file" /></svg>
+                <h3>Inspect the source</h3>
+                <p>
+                  Open a reference to see the exact passage and surrounding
+                  context.
+                </p>
+              </article>
+            </div>
+          </section>
+          <footer class="main-footer">
+            <span>EvidenceLens <span class="version">v0.2</span></span>
+            <div>
+              <button id="index-button" type="button">
+                Build semantic index</button
+              ><a href="/api/docs" target="_blank" rel="noopener">API docs ↗</a>
+            </div>
+          </footer>
+        </div>
+      </main>
+    </div>
+    <dialog id="source-dialog" class="source-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">SOURCE INSPECTOR</span>
+          <h2 id="source-title">Source</h2>
+          <p id="source-location"></p>
+        </div>
+        <button
+          id="source-close"
+          class="icon-button"
+          aria-label="Close source inspector"
+          type="button"
+        >
+          <svg><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <pre id="source-text" class="source-text"></pre>
+      <div class="dialog-footer">
+        <span>Highlighted text is the retrieved passage.</span
+        ><a id="source-download" class="secondary-button"
+          ><svg aria-hidden="true"><use href="#i-download" /></svg>Download
+          original</a
+        >
+      </div>
+    </dialog>
+    <dialog id="help-dialog" class="help-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">OPTIONAL LOCAL AI</span>
+          <h2>Enable AI answers</h2>
+        </div>
+        <button
+          id="help-close"
+          class="icon-button"
+          aria-label="Close AI setup guide"
+          type="button"
+        >
+          <svg><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div class="help-content">
+        <p>
+          Evidence search works immediately. AI answers require Ollama running
+          on this computer and a local chat model.
+        </p>
+        <ol>
+          <li>
+            Install Ollama from
+            <a href="https://ollama.com/download" target="_blank" rel="noopener"
+              >ollama.com/download</a
+            >.
+          </li>
+          <li>In a separate terminal, download the models below.</li>
+          <li>
+            Refresh AI status, then select <strong>AI answer</strong>. Build the
+            semantic index to enable Hybrid search.
+          </li>
+        </ol>
+        <pre id="model-commands"></pre>
+        <p class="muted">
+          Model downloads can be several GB. Speed depends on your memory and
+          hardware. Sources should still be checked; AI can misinterpret
+          evidence.
+        </p>
+        <button id="refresh-status" class="primary-button" type="button">
+          Refresh AI status
+        </button>
+      </div>
+    </dialog>
+    <dialog id="delete-dialog" class="delete-dialog">
+      <h2>Remove this document?</h2>
+      <p id="delete-name"></p>
+      <p class="muted">
+        Its stored file, passages, embeddings, and related research history will
+        be removed from this workspace.
+      </p>
+      <div class="delete-actions">
+        <button id="delete-cancel" class="secondary-button" type="button">
+          Keep document</button
+        ><button id="delete-confirm" class="danger-button" type="button">
+          Remove document
+        </button>
+      </div>
+    </dialog>
+    <dialog id="history-dialog" class="history-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">SAVED ON THIS COMPUTER</span>
+          <h2>Research history</h2>
+          <p>Reopen an answer or export the evidence you found.</p>
+        </div>
+        <button
+          id="history-close"
+          class="icon-button"
+          type="button"
+          aria-label="Close research history"
+        >
+          <svg aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div id="history-list" class="history-list"></div>
+      <div class="dialog-footer">
+        <span>Up to 100 recent results are retained locally.</span
+        ><button id="clear-history" class="secondary-button" type="button">
+          Clear history
+        </button>
+      </div>
+    </dialog>
+    <dialog id="clear-history-dialog" class="delete-dialog">
+      <h2>Clear research history?</h2>
+      <p class="muted">
+        Saved questions and results will be removed. Your documents and search
+        index will remain available.
+      </p>
+      <div class="delete-actions">
+        <button
+          id="clear-history-cancel"
+          class="secondary-button"
+          type="button"
+        >
+          Keep history</button
+        ><button id="clear-history-confirm" class="danger-button" type="button">
+          Clear history
+        </button>
+      </div>
+    </dialog>
+  </body>
+</html>
